@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:instaclone/Widget/text_field_input.dart';
+import 'package:instaclone/resurces/auth_methode.dart';
+
+import 'package:instaclone/screen/signup_screen.dart';
 import 'package:instaclone/utilities/colors.dart';
+import 'package:instaclone/utilities/utilities.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -13,12 +17,30 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
     super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+  }
+
+  void loginUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    String res = await AuthMethode().loginUser(
+        email: _emailController.text, password: _passwordController.text);
+    if (res == 'success') {
+     
+    } else {
+      showSnackBar(res, context);
+    }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -60,9 +82,15 @@ class _LoginScreenState extends State<LoginScreen> {
             height: 24,
           ),
           InkWell(
-            onTap: () {},
+            onTap: loginUser,
             child: Container(
-              child: const Text("Login"),
+              child: _isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: primaryColor,
+                      ),
+                    )
+                  : const Text("Login"),
               width: double.infinity,
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(vertical: 12),
@@ -90,7 +118,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 8),
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () { Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const SignupScreen()));},
                 child: Container(
                   child: const Text(
                     "Sign Up",
