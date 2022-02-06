@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:instaclone/Widget/text_field_input.dart';
+import 'package:instaclone/responsiv/mobile_screen_layout.dart';
+import 'package:instaclone/responsiv/responsiv_layout_screen.dart';
+import 'package:instaclone/responsiv/webscreenlayout.dart';
 import 'package:instaclone/resurces/auth_methode.dart';
 
 import 'package:instaclone/screen/signup_screen.dart';
@@ -34,13 +37,23 @@ class _LoginScreenState extends State<LoginScreen> {
     String res = await AuthMethode().loginUser(
         email: _emailController.text, password: _passwordController.text);
     if (res == 'success') {
-     
+
+       Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (context) =>   const ResponsiveLayout(
+      mobileScreenLayout: MobileScreenLayout(),
+       webScreenLayout: WebScreenLayout(),
+        )));
     } else {
       showSnackBar(res, context);
     }
     setState(() {
       _isLoading = false;
     });
+  }
+
+  void navigateToSignup() {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const SignupScreen()));
   }
 
   @override
@@ -118,8 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 8),
               ),
               GestureDetector(
-                onTap: () { Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const SignupScreen()));},
+                onTap: navigateToSignup,
                 child: Container(
                   child: const Text(
                     "Sign Up",

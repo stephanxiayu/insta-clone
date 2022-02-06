@@ -3,7 +3,11 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:instaclone/Widget/text_field_input.dart';
+import 'package:instaclone/responsiv/mobile_screen_layout.dart';
+import 'package:instaclone/responsiv/responsiv_layout_screen.dart';
+import 'package:instaclone/responsiv/webscreenlayout.dart';
 import 'package:instaclone/resurces/auth_methode.dart';
+import 'package:instaclone/screen/login_screen.dart';
 import 'package:instaclone/utilities/colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:instaclone/utilities/utilities.dart';
@@ -50,12 +54,24 @@ class _SignupScreenState extends State<SignupScreen> {
         username: _usernameController.text,
         bio: _bioController.text,
         file: _image!);
-    if (res != 'success') {
-      showSnackBar(res, context);
-    }
+
     setState(() {
       _isLoading = false;
     });
+    if (res != 'success') {
+      showSnackBar(res, context);
+    } else {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => const ResponsiveLayout(
+                mobileScreenLayout: MobileScreenLayout(),
+                webScreenLayout: WebScreenLayout(),
+              )));
+    }
+  }
+
+  void navigateToLogin() {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const LoginScreen()));
   }
 
   @override
@@ -135,7 +151,13 @@ class _SignupScreenState extends State<SignupScreen> {
             InkWell(
               onTap: signUpUser,
               child: Container(
-                child:_isLoading? const Center(child: CircularProgressIndicator(color: primaryColor,),): const Text("SignUp"),
+                child: _isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: primaryColor,
+                        ),
+                      )
+                    : const Text("SignUp"),
                 width: double.infinity,
                 alignment: Alignment.center,
                 padding: const EdgeInsets.symmetric(vertical: 12),
@@ -151,7 +173,25 @@ class _SignupScreenState extends State<SignupScreen> {
             const SizedBox(
               height: 12,
             ),
-            
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  child: const Text("Du hast schon einen Account?"),
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                ),
+                GestureDetector(
+                  onTap: navigateToLogin,
+                  child: Container(
+                    child: const Text(
+                      "Login",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                  ),
+                ),
+              ],
+            )
           ],
         ),
       ),
