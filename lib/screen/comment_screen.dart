@@ -1,23 +1,60 @@
+
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:instaclone/Widget/comment_card.dart';
+import 'package:instaclone/model/user.dart';
+import 'package:instaclone/providers/user_provider.dart';
+import 'package:instaclone/resurces/firestore_methodes.dart';
 import 'package:instaclone/utilities/colors.dart';
+import 'package:provider/provider.dart';
 
 class CommentScreen extends StatefulWidget {
-  const CommentScreen({Key? key}) : super(key: key);
+  final snap;
+  const CommentScreen({Key? key, required this.snap}) : super(key: key);
 
   @override
   _CommentScreenState createState() => _CommentScreenState();
 }
 
 class _CommentScreenState extends State<CommentScreen> {
+  final TextEditingController _commentController = TextEditingController();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _commentController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final User user = Provider.of<UserProvider>(context).getUser;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: mobileBackgroundColor,
         centerTitle: false,
       ),
-      body: CommentCard(),
+      body: StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection('posts')
+              .doc(widget.snap['postId'])
+              .collection('comments')
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            return ListView.builder(
+                itemCount: (snapshot.data! as dynamic).docs.length,
+                itemBuilder: (context, index) => CommentCard(
+snap:(snapshot.data! as dynamic).docs[index].data()
+
+                ));
+          }),
       bottomNavigationBar: SafeArea(
           child: Container(
         height: kTextTabBarHeight,
@@ -28,20 +65,31 @@ class _CommentScreenState extends State<CommentScreen> {
         child: Row(
           children: [
             CircleAvatar(
-              backgroundImage: NetworkImage(
-                  "https://images.unsplash.com/photo-1554109394-7e351053be0d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=463&q=80"),
+              backgroundImage: NetworkImage(user.photoUrl),
               radius: 18,
             ),
             Expanded(
                 child: Padding(
               padding: const EdgeInsets.only(left: 16, right: 8),
               child: TextField(
+                controller: _commentController,
                 decoration: InputDecoration(
-                    hintText: 'Comment Username', border: InputBorder.none),
+                    hintText: 'Comment as ${user.username}',
+                    border: InputBorder.none),
               ),
             )),
             InkWell(
-              onTap: () {},
+              onTap: () async {
+                await FirestoreMethods().postComment(
+                    widget.snap['postId'],
+                    _commentController.text,
+                    user.uid,
+                    user.username,
+                    user.photoUrl);
+                setState(() {
+                  _commentController.text = '';
+                });
+              },
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: const Text(
