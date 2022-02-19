@@ -21,7 +21,8 @@ class _CommentCardState extends State<CommentCard> {
       child: Row(
         children: [
           CircleAvatar(
-            backgroundImage: NetworkImage(widget.snap['profilePic']), radius: 18,
+            backgroundImage: NetworkImage(widget.snap['profilePic']),
+            radius: 18,
           ),
           Expanded(
             child: Padding(
@@ -33,7 +34,7 @@ class _CommentCardState extends State<CommentCard> {
                   RichText(
                     text: TextSpan(children: [
                       TextSpan(
-                        text:widget.snap['name'],
+                        text: widget.snap['name'],
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       TextSpan(
@@ -44,19 +45,23 @@ class _CommentCardState extends State<CommentCard> {
                   Padding(
                     padding: const EdgeInsets.only(top: 4),
                     child: Text(
-                    DateFormat.yMMMd().format(widget.snap['datePublished'].toDate()),
-                      style:const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                      DateFormat.yMMMd()
+                          .format(widget.snap['datePublished'].toDate()),
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.w400),
                     ),
                   ),
-          
-                 
                 ],
               ),
             ),
           ),
-           Container(padding: const EdgeInsets.all(8),
-                  child: const Icon(Icons.favorite, size: 16,),
-                  ),
+          Container(
+            padding: const EdgeInsets.all(8),
+            child: const Icon(
+              Icons.favorite,
+              size: 16,
+            ),
+          ),
         ],
       ),
     );

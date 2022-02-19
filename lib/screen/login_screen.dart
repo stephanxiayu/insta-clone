@@ -8,6 +8,7 @@ import 'package:instaclone/resurces/auth_methode.dart';
 
 import 'package:instaclone/screen/signup_screen.dart';
 import 'package:instaclone/utilities/colors.dart';
+import 'package:instaclone/utilities/global_varibles.dart';
 import 'package:instaclone/utilities/utilities.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -61,7 +62,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
         body: SafeArea(
             child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
+      padding: MediaQuery.of(context).size.width>webScreenSize?  EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width/3):
+      const EdgeInsets.symmetric(horizontal: 32),
       width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
